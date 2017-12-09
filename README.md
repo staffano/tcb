@@ -15,6 +15,33 @@ By default tcb will clone the https://github.com/staffano/meta-crosstools reposi
 >tcb --help
 ```
 
+## Example
+
+### List available toolchains
+
+```bash
+>tcb ls
+```
+### Build all toolchains from scratch
+
+Note that this will consume a lot of disk space and patience...
+
+```bash
+>go get github.com/staffano/tcb
+>go install github.com/staffano/tcb
+>go install all
+```
+
+### Clean up
+
+Sometimes stuff will end up in a strange state and the easiest path to make a clean restart.
+
+```bash
+>docker volume rm bb-build-vol
+>docker system prune -a
+>rm -rf ~/tcb_workspace
+```
+
 ## License
 
 See [LICENSE](LICENSE).

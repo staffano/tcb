@@ -36,7 +36,7 @@ import (
 )
 
 func init() {
-	viper.SetDefault("builder.repo.url", "ssh://staffan@homeland:/srv/repos/git/meta-crosstools.git")
+	viper.SetDefault("builder.repo.url", "https://github.com/staffano/meta-crosstools.git")
 	viper.SetDefault("builder.repo.rev", "master")
 }
 

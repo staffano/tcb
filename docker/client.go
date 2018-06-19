@@ -43,7 +43,7 @@ var dockerFile = `FROM ubuntu
 RUN apt update -y && apt upgrade -y
 RUN apt install -y build-essential gnat-5 git locales python3 wget m4 gawk unzip nano texinfo
 RUN locale-gen en_US.UTF-8
-RUN git clone https://github.com/openembedded/bitbake.git && cd /bitbake && git checkout 1.32
+RUN git clone https://github.com/openembedded/bitbake.git && cd /bitbake
 ENV LANG en_US.UTF-8
 ENV PATH /bitbake/bin:$PATH
 ENV PYTHONPATH /bitbake/lib:$PYTHONPATH

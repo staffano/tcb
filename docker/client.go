@@ -33,6 +33,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+var downloadVol = "bb-downloads"
+var tmpVol = "bb-tmp-vol"
+
 var proxyVars = [...]string{"HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy",
 	"FTP_PROXY", "ftp_proxy", "NO_PROXY", "no_proxy"}
 
@@ -65,10 +68,11 @@ func getProxyArgs(argName string) []string {
 	return res
 }
 
-func getVolumeArgs(buildTmpVol, resultDir, metaCrosstoolsDir, localConfPath string) []string {
+func getVolumeArgs(resultDir, metaCrosstoolsDir, localConfPath string) []string {
 	var res []string
 
-	res = append(res, "-v", fmt.Sprintf("%s:/build/tmp", buildTmpVol))
+	res = append(res, "-v", fmt.Sprintf("%s:/build/downloads", downloadVol))
+	res = append(res, "-v", fmt.Sprintf("%s:/build/tmp", tmpVol))
 	res = append(res, "-v", fmt.Sprintf("%s:/build/RESULT", resultDir))
 	res = append(res, "-v", fmt.Sprintf("%s:/meta-crosstools/", metaCrosstoolsDir))
 	res = append(res, "--mount", fmt.Sprintf("type=bind,source=%s,target=/build/conf/local.conf,readonly", localConfPath))
@@ -100,8 +104,11 @@ func BuildImage() {
 }
 
 // Prune all tcb related docker stuff
-func Prune(buildTmpVol string) {
-	cmd := exec.Command("docker", "volume", "rm", "-f", buildTmpVol)
+func Prune() {
+	cmd := exec.Command("docker", "volume", "rm", "-f", tmpVol)
+	handleCmdOutput(cmd, "docker volume rm")
+
+	cmd = exec.Command("docker", "volume", "rm", "-f", downloadVol)
 	handleCmdOutput(cmd, "docker volume rm")
 
 	cmd = exec.Command("docker", "image", "rm", "-f", "meta_crosstools_bitbake")
@@ -109,11 +116,11 @@ func Prune(buildTmpVol string) {
 }
 
 // Execute set up the container and executes it with a bash command
-func Execute(buildTmpVol, resultDir, metaCrosstoolsDir, localConfPath string, arguments ...string) {
+func Execute(resultDir, metaCrosstoolsDir, localConfPath string, arguments ...string) {
 
 	args := []string{"run", "-i", "--rm"}
 	args = append(args, getProxyArgs("--env")...)
-	args = append(args, getVolumeArgs(buildTmpVol, resultDir, metaCrosstoolsDir, localConfPath)...)
+	args = append(args, getVolumeArgs(resultDir, metaCrosstoolsDir, localConfPath)...)
 	args = append(args, "meta_crosstools_bitbake")
 	args = append(args, arguments...)
 
@@ -122,6 +129,28 @@ func Execute(buildTmpVol, resultDir, metaCrosstoolsDir, localConfPath string, ar
 	} else {
 		cmd := exec.Command("docker", args...)
 		handleCmdOutput(cmd, "docker run")
+	}
+}
+
+// RunBash executes bash prompt in the container
+func RunBash(resultDir, metaCrosstoolsDir, localConfPath string) {
+
+	args := []string{"run", "-i", "--rm"}
+	args = append(args, getProxyArgs("--env")...)
+	args = append(args, getVolumeArgs(resultDir, metaCrosstoolsDir, localConfPath)...)
+	args = append(args, "meta_crosstools_bitbake")
+	args = append(args, "bash")
+	args = append(args, "-i")
+
+	if viper.GetBool("dryrun") {
+		fmt.Printf("docker %s", strings.Trim(fmt.Sprintf("%v", args), "[]"))
+	} else {
+		cmd := exec.Command("docker", args...)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+		fmt.Println("Done.")
 	}
 }
 

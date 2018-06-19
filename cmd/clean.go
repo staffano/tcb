@@ -45,7 +45,7 @@ func init() {
 func Clean(cmd *cobra.Command, targets []string) {
 	log.Printf("builder.Clean(%v)", targets)
 	if len(targets) == 0 {
-		docker.Prune("bb-build-vol")
+		docker.Prune()
 		workspace.Reset()
 		return
 	}
@@ -56,9 +56,9 @@ func Clean(cmd *cobra.Command, targets []string) {
 		case "RESULTS":
 			os.RemoveAll(workspace.Path("results"))
 		case "DOCKER":
-			docker.Prune("bb-build-vol")
+			docker.Prune()
 		case "ALL":
-			docker.Prune("bb-build-vol")
+			docker.Prune()
 			workspace.Reset()
 		}
 	}

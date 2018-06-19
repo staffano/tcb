@@ -82,7 +82,7 @@ func BuildTarget(target string) {
 
 	// Run bitbake dockerized
 	workspace.MakeDir(0777, "results")
-	docker.Execute("bb-build-vol", workspace.Path("results"), workspace.Path("meta-crosstools"),
+	docker.Execute(workspace.Path("results"), workspace.Path("meta-crosstools"),
 		workspace.Path("build", "conf", "local.conf"), "bitbake", "image")
 	workspace.SetStamp(stamp)
 }

@@ -77,6 +77,8 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&(workspace.Wd), "ws", defaultWorkspace, "workspace (default is "+defaultWorkspace+")")
 	RootCmd.PersistentFlags().StringP("builder.repo.url", "", "https://github.com/staffano/meta-crosstools.git", "Repository to use for builder.")
 	viper.BindPFlag("builder.repo.url", RootCmd.PersistentFlags().Lookup("builder.repo.url"))
+	RootCmd.PersistentFlags().StringP("builder.repo.rev", "", "master", "Revision to use of the builder repo.")
+	viper.BindPFlag("builder.repo.rev", RootCmd.PersistentFlags().Lookup("builder.repo.rev"))
 	RootCmd.PersistentFlags().BoolP("keep-sources", "", false, "If set, git pull will not be called for the source directory")
 	viper.BindPFlag("keep-sources", RootCmd.PersistentFlags().Lookup("keep-sources"))
 	RootCmd.PersistentFlags().BoolP("dryrun", "", false, "If set, build commands will not be executed, but printed to stdout instead.")

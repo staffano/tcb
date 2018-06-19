@@ -31,8 +31,8 @@ var bashCmd = &cobra.Command{
 	Use:   "bash",
 	Short: "start a bash shell in the build containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		docker.Execute("bb-build-vol", workspace.Path("results"), workspace.Path("meta-crosstools"),
-			workspace.Path("build", "conf", "local.conf"), "bash")
+		docker.RunBash(workspace.Path("results"), workspace.Path("meta-crosstools"),
+			workspace.Path("build", "conf", "local.conf"))
 	},
 }
 

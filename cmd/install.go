@@ -75,7 +75,7 @@ func InstallTarget(target string) {
 
 	// Run bitbake dockerized
 	workspace.MakeDir(0777, "results")
-	docker.Execute("bb-build-vol", workspace.Path("results"), workspace.Path("meta-crosstools"),
+	docker.Execute(workspace.Path("results"), workspace.Path("meta-crosstools"),
 		workspace.Path("build", "conf", "local.conf"), "bitbake", "-f", "-c", "do_copy_image", "image")
 	workspace.SetStamp(stamp)
 }
